@@ -1,16 +1,15 @@
 import { useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
 import { useRef } from "react";
-import { Color, MeshStandardMaterial, Vector3 } from "three";
+import { Color, DoubleSide, MeshStandardMaterial, Vector3 } from "three";
 import CSM from 'three-custom-shader-material'
 
-const originalMaterial = new MeshStandardMaterial({ color: '0xfefefe'})
+const originalMaterial = new MeshStandardMaterial({ color: 'white', side: DoubleSide})
 
 const fragment = /* glsl */ `
 
 uniform float uNoiseSize;
-uniform float uDissolveAmount;
-uniform vec3 uColor;
+uniform float uProgress;
 uniform vec3 uDissolveColor;
 uniform vec3 uDissolveDirection;
 uniform float uDissolveWidth;
@@ -40,21 +39,23 @@ void main()
 
   float emissionThreshold = uDissolveWidth * 0.01;
 
+  float progress = uProgress;
+
   // calculate the area to clip/hide from view
 
   float clipTest = ( dot( vWorldPosition, normalize( transitionDirection) ) + 1.0 ) / 2.0;
 
   // discard fragments that are less than 0.0
 
-  if( clipTest - uDissolveAmount < 0. ) discard;
+  if( clipTest - progress < 0. ) discard;
 
   // generate square pattern
 
-  float squares =  step( 0.7, random( floor( uv * uNoiseSize ) * uDissolveAmount ) );
+  float squares =  step( 0.7, random( floor( uv * uNoiseSize ) * progress ) );
 
   // create cliped ring
 
-  float emissionRing = step( clipTest - emissionThreshold, uDissolveAmount ) * squares;
+  float emissionRing = step( clipTest - emissionThreshold, progress ) * squares;
 
 
   // create color out of emission ring
@@ -65,7 +66,7 @@ void main()
 
 
 
-  vec4 color = mix( vec4( uColor, 1.0 ), emissionColor, emissionRing );
+  vec4 color = mix( csm_DiffuseColor.rgba, emissionColor, emissionRing );
 
   // gl_FragColor = vec4( color );
   csm_DiffuseColor = color;
@@ -101,7 +102,7 @@ void main()
 export const Experience = () => 
 {
 
-  const { Size, Dissolve, Width } = useControls(
+  const { Size, Progress, Width } = useControls(
     {
       Size: 
       {
@@ -110,7 +111,7 @@ export const Experience = () =>
         max: 50,
         step: 0.001
       },
-      Dissolve:
+      Progress:
       {
         value: 1,
         min: 0,
@@ -130,9 +131,8 @@ export const Experience = () =>
   const uniforms = useRef(
     {
       uNoiseSize: { value: 40 },
-      uDissolveAmount: { value: 1 },
-      uColor: { value: new Color('#e07c63') },
-      uDissolveColor: { value: new Color('#FEFEFE').multiplyScalar(50)},
+      uProgress: { value: 1 },
+      uDissolveColor: { value: new Color('#0082B2').multiplyScalar(15)},
       uDissolveDirection: { value: new Vector3( 0, 1, 0 ) },
       uDissolveWidth: { value: 8 }
     }
@@ -142,7 +142,7 @@ export const Experience = () =>
   {
 
     uniforms.current.uNoiseSize.value = Size
-    uniforms.current.uDissolveAmount.value = Dissolve
+    uniforms.current.uProgress.value = Progress
     uniforms.current.uDissolveWidth.value = Width
 
     console.log(uniforms.current.uNoiseSize.value)
