@@ -9,6 +9,13 @@ const originalMaterial = new MeshStandardMaterial({ color: 'white', side: Double
 
 const fragment = /* glsl */ `
 
+/* Credit to Harry Alisavakis, original code author for Unity game engine
+// Website: https://halisavakis.com/my-take-on-shaders-directional-dissolve/
+// Twitter: @HarryAlisavakis
+// Copy Right: Harry Alisavakis, 2018 & Rickey Otano, 2023
+// License: Free to use and modify, keep this comment in shader code
+*/
+
 uniform float uNoiseSize;
 uniform float uProgress;
 uniform vec3 uDissolveColor;
