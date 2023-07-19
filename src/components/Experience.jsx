@@ -3,6 +3,7 @@ import { useControls } from "leva";
 import { useRef } from "react";
 import { Color, DoubleSide, MeshStandardMaterial, Vector3 } from "three";
 import CSM from 'three-custom-shader-material'
+import { easing } from 'maath'
 
 const originalMaterial = new MeshStandardMaterial({ color: 'white', side: DoubleSide})
 
@@ -97,16 +98,25 @@ void main()
 }
 
 `
+// direction vectors for animation
 
+const directions =
+{
+  top: new Vector3( 0, 1, 0 ),
+  bottom: new Vector3( 0, -1, 0 ),
+  left: new Vector3( 1, 0, 0 ),
+  right: new Vector3( -1, 0, 0 )
+}
 
 export const Experience = () => 
 {
 
-  const { Size, Progress, Width } = useControls(
+  // controls
+  const { Size, Progress, Width, Start } = useControls(
     {
       Size: 
       {
-        value: 30,
+        value: 15,
         min: 10,
         max: 50,
         step: 0.001
@@ -120,10 +130,15 @@ export const Experience = () =>
       },
       Width:
       {
-        value: 8,
+        value: 4,
         min: 1,
         max: 20,
         step: 0.01
+      },
+      Start:
+      {
+        value: 'Top',
+        options: ['Top', 'Bottom', 'Left', 'Right']
       }
     }
   )
@@ -134,18 +149,40 @@ export const Experience = () =>
       uProgress: { value: 1 },
       uDissolveColor: { value: new Color('#0082B2').multiplyScalar(15)},
       uDissolveDirection: { value: new Vector3( 0, 1, 0 ) },
-      uDissolveWidth: { value: 8 }
+      uDissolveWidth: { value: 8 },
     }
   )
 
-  useFrame(() =>
+  useFrame((_state, delta) =>
   {
 
     uniforms.current.uNoiseSize.value = Size
     uniforms.current.uProgress.value = Progress
     uniforms.current.uDissolveWidth.value = Width
 
-    console.log(uniforms.current.uNoiseSize.value)
+    switch( Start )
+    {
+      case 'Top':
+        uniforms.current.uDissolveDirection.value = directions.top
+      break
+
+      case 'Bottom':
+        uniforms.current.uDissolveDirection.value = directions.bottom
+      break
+
+      case 'Left':
+        uniforms.current.uDissolveDirection.value = directions.left
+      break
+
+      case 'Right':
+        uniforms.current.uDissolveDirection.value = directions.right
+      break
+
+      default:
+        uniforms.current.uDissolveDirection.value = directions.top
+      break
+    }
+
 
   })
   
