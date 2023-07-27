@@ -3,7 +3,6 @@ import { useControls } from "leva";
 import { useRef } from "react";
 import { Color, DoubleSide, MeshStandardMaterial, Vector3 } from "three";
 import CSM from 'three-custom-shader-material'
-import { easing } from 'maath'
 
 const originalMaterial = new MeshStandardMaterial({ color: 'white', side: DoubleSide})
 
@@ -51,11 +50,12 @@ void main()
 
   // calculate the area to clip/hide from view
 
-  float clipTest = ( dot( vWorldPosition, normalize( transitionDirection) ) + 1.0 ) / 2.0;
+  float clipTest =  ( 1.0 + dot( vWorldPosition , normalize( transitionDirection ) ) ) / 2.0;
+
 
   // discard fragments that are less than 0.0
 
-  if( clipTest - progress < 0. ) discard;
+  if( clipTest - progress < 0.0 ) discard;
 
   // generate square pattern
 
@@ -97,7 +97,9 @@ void main()
 
   // world coordinates
 
-  vWorldPosition = vec3(modelMatrix * vec4( position, 1.0 )).xyz;
+  vec4 localPosition = modelMatrix * vec4( position, 1.0 );
+
+  vWorldPosition = normalize( localPosition.xyz );
 
 
   // gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
@@ -160,7 +162,8 @@ export const Experience = () =>
     }
   )
 
-  useFrame((_state, delta) =>
+
+  useFrame(( ) =>
   {
 
     uniforms.current.uNoiseSize.value = Size
@@ -192,13 +195,14 @@ export const Experience = () =>
 
 
   })
+
   
   return (
     <>
       
       <mesh>
         <boxGeometry
-          args={[1.5,1.5,1.5]}
+          args={[2,2,2]}
         />
 
         <CSM 
@@ -210,7 +214,6 @@ export const Experience = () =>
         />
         
       </mesh>
-
     </>
   );
 };
