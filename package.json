@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "vercel --prod"
   },
   "dependencies": {
     "@react-three/drei": "^9.78.2",
@@ -19,7 +20,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "three": "^0.154.0",
-    "three-custom-shader-material": "^5.3.8"
+    "three-custom-shader-material": "^5.3.8",
+    "vercel": "^31.2.2"
   },
   "devDependencies": {
     "@types/react": "^18.0.27",

@@ -4,7 +4,11 @@ import { useRef } from "react";
 import { Color, DoubleSide, MeshStandardMaterial, Vector3 } from "three";
 import CSM from 'three-custom-shader-material'
 
-const originalMaterial = new MeshStandardMaterial({ color: 'white', side: DoubleSide})
+const originalMaterial = new MeshStandardMaterial({ 
+  color: 'white', 
+  side: DoubleSide,
+  toneMapped: false,
+})
 
 const fragment = /* glsl */ `
 
@@ -121,7 +125,7 @@ export const Experience = () =>
 {
 
   // controls
-  const { Size, Progress, Width, Start } = useControls(
+  const { Size, Progress, Width, dissolveColor, Start } = useControls(
     {
       Size: 
       {
@@ -144,6 +148,10 @@ export const Experience = () =>
         max: 20,
         step: 0.01
       },
+      dissolveColor:
+      {
+        value: '#0082B2'
+      },
       Start:
       {
         value: 'Top',
@@ -156,7 +164,7 @@ export const Experience = () =>
     {
       uNoiseSize: { value: 40 },
       uProgress: { value: 1 },
-      uDissolveColor: { value: new Color('#0082B2').multiplyScalar(15)},
+      uDissolveColor: { value: new Color('#0082B2').multiplyScalar(30)},
       uDissolveDirection: { value: new Vector3( 0, 1, 0 ) },
       uDissolveWidth: { value: 8 },
     }
@@ -169,6 +177,7 @@ export const Experience = () =>
     uniforms.current.uNoiseSize.value = Size
     uniforms.current.uProgress.value = Progress
     uniforms.current.uDissolveWidth.value = Width
+    uniforms.current.uDissolveColor.value = new Color( dissolveColor ).multiplyScalar( 30 )
 
     switch( Start )
     {

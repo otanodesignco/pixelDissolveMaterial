@@ -13,9 +13,8 @@ function App() {
       <Environment preset="sunset" />
       <EffectComposer>
         <Bloom 
-          luminanceThreshold={0.8}
-          luminanceSmoothing={ 0.02}
-          intensity={1.0}
+          luminanceThreshold={ 1 }
+          intensity={ 1.5 }
           mipmapBlur
         />
       </EffectComposer>
