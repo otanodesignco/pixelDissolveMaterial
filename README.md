@@ -7,9 +7,9 @@ This GLSL Shader code is a port from the original unity code for threejs and rea
 
 demo https://pixel-dissolve.vercel.app/
 
-![Effect Image 1](https://github.com/otanodesignco/pixelDissolveMaterial/main/blob/pixel.png?raw=true)
+![Effect Image 1](https://github.com/otanodesignco/pixelDissolveMaterial/blob/main/pixel.png?raw=true)
 
-![Effect Image 2](https://github.com/otanodesignco/pixelDissolveMaterial/main/blob/pixel2.png?raw=true)
+![Effect Image 2](https://github.com/otanodesignco/pixelDissolveMaterial/blob/main/pixel2.png?raw=true)
 
 Known Issues
 
