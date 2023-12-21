@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import { shaderMaterial } from "@react-three/drei";
 import { extend, useFrame } from "@react-three/fiber";
-import { Color, DoubleSide } from 'three';
+import { BackSide, Color, DoubleSide, FrontSide } from 'three';
 
 export default function PixelRevealMaterial({
         patternSize = 40, // size of the pixel pattern
@@ -11,7 +11,8 @@ export default function PixelRevealMaterial({
         progress = 0, // animation progress
         patternLineSize = 2, // size of the line for the pattern
         axis = 'y', // transition direct
-        start = 'top' // start orientation top on x means left
+        start = 'top', // start orientation top on x means left
+        side = 'both' // side to render
     })
 {
     const uniforms =
@@ -63,6 +64,27 @@ export default function PixelRevealMaterial({
 
         default:
             transitionDirection = 1
+        break;
+    }
+
+    let renderedSide = DoubleSide
+
+    switch( side )
+    {
+        case 'front':
+            renderedSide = FrontSide
+        break;
+
+        case 'back':
+            renderedSide = BackSide
+        break;
+
+        case 'both':
+            renderedSide = DoubleSide
+        break;
+
+        default:
+            renderedSide = DoubleSide
         break;
     }
 
@@ -159,7 +181,7 @@ void main()
 }
     `
 
-    console.log( fragmentShader )
+    
    
     const PixelRevealMaterial = shaderMaterial( uniforms, vertexShader, fragmentShader )
 
@@ -171,7 +193,7 @@ void main()
         <pixelRevealMaterial
             key={ PixelRevealMaterial.key }
             transparent={ true }
-            side={ DoubleSide }
+            side={ renderedSide }
         />
     )
 }
